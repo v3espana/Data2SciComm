@@ -1,0 +1,13 @@
+---
+title: "D2SC ICMA Notebook"
+output: html_notebook
+author: "Vincent Espana"
+date: "`r Sys.Date()`"
+---
+
+# ICMA 9/9/2024
+
+```{r}
+plot(cars)
+```
+
