@@ -5,9 +5,60 @@ author: "Vincent Espana"
 date: "`r Sys.Date()`"
 ---
 
-# ICMA 9/9/2024
+# ICMA 9/9/2024 
 
 ```{r}
 plot(cars)
+```
+
+# ICMA 9/11/2024
+
+This is where we put plain text
+
+```{r}
+# this is where we put r code
+```
+
+```{r}
+0hno!This_is.a_nightmare <- "hello"
+```
+
+```{r}
+ohno_this_is_a_nightmare <- "hello"
+# dots also work
+```
+
+```{r}
+2+2
+```
+```{r}
+x <- 2 + 2
+```
+
+```{r}
+?mean
+```
+
+```{r}
+mean(c(2, 3, 4))
+```
+
+```{r}
+myVector <- c(2, 3, 4)
+```
+
+```{r}
+mean(my_vector)
+```
+```{r}
+my_vector <- c(2, 3, 4)
+```
+
+```{r}
+?sd
+```
+
+```{r}
+sd(1:2) ^ 2
 ```
 
