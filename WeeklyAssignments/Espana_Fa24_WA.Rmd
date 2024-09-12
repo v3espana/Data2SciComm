@@ -1,0 +1,31 @@
+---
+title: "D2SC: Weekly Assignments"
+author: Vincent Espana
+date: `r Sys.Date()`
+output: html_notebook
+---
+
+# Initial Loading
+
+```{r}
+?library
+```
+
+```{r}
+library(tidyverse)
+```
+
+# Week 1
+
+To figure out how to load a library in RStudio, I used a quick Google search. I entered "how to load libraries in R" into the searched bar and opened the first two links, both of which explained to use the "library()" function. Running an additional code block using the help function certified the contents of those link. After adding it into the code block and running it, I was able to see that the library was successfully loaded into RStudio. I reset R and cleared the outputs and ran it once more to be sure.
+
+https://bookdown.org/nana/intror/install-and-load-packages.html
+https://campus.datacamp.com/courses/intermediate-r/chapter-3-functions?ex=17
+
+```{r}
+?tidyverse
+```
+
+Description
+
+The 'tidyverse' is a set of packages that work in harmony because they share common data representations and 'API' design. This package is designed to make it easy to install and load multiple 'tidyverse' packages in a single step. Learn more about the 'tidyverse' at https://www.tidyverse.org.
