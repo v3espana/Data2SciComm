@@ -61,4 +61,63 @@ my_vector <- c(2, 3, 4)
 ```{r}
 sd(1:2) ^ 2
 ```
+# ICMA 9/16/2024
+
+```{r}
+#install.packages() last time
+library(tidyverse)
+```
+
+```{r}
+#some functions cant be used/need more work
+stats::filter()
+```
+
+```{r}
+#does not work
+head(3, billboard)
+```
+
+
+```{r}
+#whatever output is first is put into the first position
+# 3 will technically be in second position
+billboard %>%
+  head(3)
+```
+
+```{r}
+my_numbers <- c(1, 2, 3, 4, 5, 8, 9, 10)
+```
+
+```{r}
+mean(my_numbers)
+```
+```{r}
+my_numbers %>%
+  mean()
+```
+```{r}
+getwd()
+```
+
+```{r}
+mtcars
+```
+
+```{r}
+write_csv(mtcars, #object name
+          "mtcars_fromR.csv") #file name to save
+
+```
+
+```{r}
+mtcars %>%
+  rownames_to_column() %>%
+  write_csv("mtcars_fromR_rownames.csv")
+```
+
+```{r}
+mtcars_read <- read_csv("mtcars_fromR_rownames.csv")
+```
 
