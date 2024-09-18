@@ -120,4 +120,78 @@ mtcars %>%
 ```{r}
 mtcars_read <- read_csv("mtcars_fromR_rownames.csv")
 ```
+# ICMA 9/18/2024
+
+```{r}
+?ChickWeight
+```
+
+```{r}
+ChickWeight %>%
+  select(weight)
+```
+
+```{r}
+chick_clean <- ChickWeight %>%
+  select(chick_id = Chick,
+         diet = Diet,
+         age_days = Time,
+         weight_gm = weight) #will reorder as well as rename
+#will not print because this is only assignment --> will show up in environment
+```
+
+equality operator in R is "=="
+
+```{r}
+chick_clean %>%
+  arrange(chick_id)
+```
+
+```{r}
+chick_clean %>%
+  mutate(weight_per_day = weight_gm/age_days)
+```
+
+```{r}
+chick_clean %>%
+  mutate(weight_lbs = weight_gm/453.6) #mutate will always add to end of dataset 
+# doubles will go to infinite within computer bounds
+
+```
+
+```{r}
+42/453.6
+```
+```{r}
+chick_clean %>%
+  mutate(weight_lbs = weight_gm/453.6) %>%
+  group_by(diet, age_days) %>%
+  summarize(n = n(),
+            mean_wgt_gm = mean(weight_gm,),
+            mean_wgt_lbs =mean(weight_lbs)) %>%
+  filter(age_days == 20)
+```
+
+3 things:
+for each diet group
+number of chicks, avg gm weight, avg lbs weight
+on day 20
+
+```{r}
+chick_clean %>%
+  filter(age_days == 20) %>%
+  mutate(weight_lbs = weight_gm/453.6) %>%
+  group_by(diet) %>%
+  summarize(n = n(),
+            mean_wgt_gm = mean(weight_gm,),
+            mean_wgt_lbs =mean(weight_lbs))
+```
+
+```{r}
+mtcars_modified <- read_csv("mtcars_fromR_rownames.csv")
+```
+
+```{r}
+glimpse(mtcars_modified)
+```
 
