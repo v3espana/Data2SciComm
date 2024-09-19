@@ -184,7 +184,7 @@ chick_clean %>%
   group_by(diet) %>%
   summarize(n = n(),
             mean_wgt_gm = mean(weight_gm,),
-            mean_wgt_lbs =mean(weight_lbs))
+            mean_wgt_lbs = mean(weight_lbs))
 ```
 
 ```{r}
