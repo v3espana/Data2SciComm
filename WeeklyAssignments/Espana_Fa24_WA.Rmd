@@ -8,14 +8,18 @@ output: html_notebook
 # Initial Loading
 
 ```{r}
+
 ?library
+
 ```
 
 ```{r}
+
 library(tidyverse)
+
 ```
 
-# Week 1
+# Week 1 Assignment
 
 To figure out how to load a library in RStudio, I used a quick Google search. I entered "how to load libraries in R" into the searched bar and opened the first two links, both of which explained to use the "library()" function. Running an additional code block using the help function certified the contents of those link. After adding it into the code block and running it, I was able to see that the library was successfully loaded into RStudio. I reset R and cleared the outputs and ran it once more to be sure.
 
@@ -23,9 +27,49 @@ https://bookdown.org/nana/intror/install-and-load-packages.html
 https://campus.datacamp.com/courses/intermediate-r/chapter-3-functions?ex=17
 
 ```{r}
+
 ?tidyverse
+
 ```
 
 Description
 
 The 'tidyverse' is a set of packages that work in harmony because they share common data representations and 'API' design. This package is designed to make it easy to install and load multiple 'tidyverse' packages in a single step. Learn more about the 'tidyverse' at https://www.tidyverse.org.
+
+# Week 2 Assignment
+
+```{r}
+
+MFID_analogy_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/WeeklyAssignments/tidy_data/MFIndD_analogy.csv")
+
+```
+```{r}
+
+MFID_analogy_read
+
+```
+
+1. The column that contains the unique identifier for each participant is the "qualtrics_id" column.
+
+2a. There are 792 rows and 6 columns in the dataset. I did not use a specific code chunk for this information because the number of rows and columns are provided when I initially read in the csv file for number 1.
+
+```{r}
+
+MFID_analogy_read %>%
+  distinct(qualtrics_id) %>%
+  count()
+
+```
+
+
+2b. Using the distinct function, I was able to filter out repeated qualtrics ID's for multiple trials of the same respondee. Therefore, there are 99 individuals in the dataset, as seen in the code chunk above.
+
+```{r}
+
+MFID_analogy_read %>%
+  group_by(qualtrics_id) %>%
+  summarize(n_trials = n())
+
+```
+
+2c. As seen in the code chunk above, each of the 99 participants complete 8 trials, which was found using the count function n(). Therefore, every participant has the same number of trials.
