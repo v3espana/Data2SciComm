@@ -244,4 +244,40 @@ billboard %>%
         into = c(year, month, day))
 ```
 
+# ICMA 9/25/2024
+
+```{r}
+ChickWeight %>%
+  ggplot(aes(x = weight)) + # provide the aesthetic mapping 
+   geom_histogram()
+```
+
+cant use pipe functions for geom histogram
+
+```{r}
+ChickWeight %>%
+  ggplot(aes(y = weight,
+             x = Time,
+             color = Diet)) +
+  geom_point() + geom_smooth()
+```
+kind of diet missing, need more information ^will add above
+noise = random variability
+
+```{r}
+
+ChickWeight %>%
+  ggplot(aes(y = weight,
+             x = Time,
+             color = Diet)) +
+  geom_boxplot(alpha = 0.5) + # make a lil transparent
+  #geom_smooth(se = FALSE) + #remove error bands
+  theme_minimal() + # using a premade theme to change appearance
+  facet_grid(~Diet) +
+  labs(y = "weight in grams", 
+       x = "days since birth",
+       title = "Weight Over Time Across Diets")  
+
+ggsave("chick_weightovertime.png", width = 9 , length = 8)
+```
 
