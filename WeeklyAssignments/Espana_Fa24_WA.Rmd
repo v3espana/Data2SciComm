@@ -73,3 +73,57 @@ MFID_analogy_read %>%
 ```
 
 2c. As seen in the code chunk above, each of the 99 participants complete 8 trials, which was found using the count function n(). Therefore, every participant has the same number of trials.
+
+# Week 3 Assignment
+
+```{r}
+
+summary_MFID <- MFID_analogy_read %>%
+  group_by(qualtrics_id) %>%
+  summarize(relational_matches = sum(response_type == "Rel"))
+
+summary_MFID #make it show up
+  
+```
+
+```{r}
+
+summary_MFID %>%
+  ggplot(aes(x = relational_matches)) +
+  geom_histogram(binwidth = 1, fill = "gray", color = "black") +
+  labs(title = "Distribution of Relational Matches", 
+       x = "Number of Relational Matches", 
+       y = "Number of Participants")
+
+
+```
+
+2. The histogram shows that participants generally tend to choose either relational matches or object matches across all trials. This is derived from the fact that an overwhelming majority of participants are at both extremes of the histogram.
+
+```{r}
+
+MFID_analogy_read %>%
+  group_by(qualtrics_id) %>%
+    pivot_wider(names_from = trial_number,
+                values_from = response_type,
+                names_prefix = "trial ") %>%
+      select(-match_type_0, -match_type_1, -response) %>% #taking additional info out
+      select("trial 1", "trial 2", "trial 3", "trial 4", "trial 5", "trial 6", "trial 7", "trial 8") #reordering to make it look better
+
+```
+
+```{r, eval = FALSE}
+
+MFID_analogy_read %>%
+  group_by(qualtrics_id) %>%
+    pivot_wider(names_from = trial_number,
+                values_from = response_type) %>% 
+      select(-match_type_0, -match_type_1, -response) %>% #remove these columns
+      select(1, 2, 3, 4, 5, 6, 7, 8)
+
+```
+
+Show My Work
+
+This code chuck did work, just not in the way that I intended it to. After removing the unnecessary columns, I wanted to reorder the columns so that it would start at trial 1 and increment to trial 8. In the corrected code chunk, I added a prefix of "trials" so that I would be more specific. I then realized that I am still a little unfamiliar with the syntax for certain functions, thus forgetting to put the column names in quotations.
+
