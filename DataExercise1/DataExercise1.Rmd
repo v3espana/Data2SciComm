@@ -71,9 +71,20 @@ long_de1 <- de1 %>%
 
 ```{r}
 
-long_de1 %>% 
+long_de1_clean <- long_de1 %>% 
   filter(is.na(value) == FALSE) %>% 
-  separate(into = c("content", "type", "DV"), col = old_column)
+  # check is.na() and is.na() == TRUE when the thing is NA and is == FALSE when the thing is not NA
+  # in this case, we're keeping everything where the is.na(value) is NOT NA
+  # therefore removing the ones where is.na(value) IS NA
+  
+  separate(into = c("content", "type", "DV"), 
+            col = old_column) %>%
+  
+  # create new column, replacing the old one
+  # NA is replaced with "resp"
+  
+  mutate(DV = case_when(is.na(DV) == TRUE ~ "resp",
+                        DV == "conf" ~ "conf")) # will completely replace that column
 
 ```
 
@@ -81,3 +92,74 @@ To check whether our is.na(value) filter was working we did the following:
   group_by(ResponseId) %>%
   count() %>% 
   filter(n!= 4)
+  
+To interpret people's responses: 
+
+for the pencil/eraser problem, for the standard correct answer is 5 cents, but we'd expect lots of folks to say 10cents. For the control probkem, the correct answer is 10 cents.
+
+for the magazine/banana problems, the correct answer for the standard is 45 cents but we'd expect folks to say 90 cents. the correct answer for control is 90 cents
+
+```{r}
+
+long_de1_clean %>%
+  filter(DV == "resp") %>%
+  distinct(value)
+
+
+```
+
+```{r}
+
+de1_analysis <- long_de1_clean %>%
+  mutate(value = parse_number(value)) %>%
+  mutate(value = case_when(value < 1 ~ value*100,
+                           value >= 1 ~ value)) %>%
+  mutate(correct_answer = case_when(content == "pencil" & type == "stnd" ~5,
+                                    content == "pencil" & type == "ctrl" ~10,
+                                    content == "mag" & type == "stnd" ~45,
+                                    content == "mag" & type == "cntl" ~90),
+         
+         # create a new column for that person's accuracy on that trial
+         # to see how if_else works, when you have one condition and then EVERYTHING ELSE
+         
+         accuracy = if_else(DV == "conf" ~ NA,
+                            value == correct_answer ~ TRUE, # they are correct
+                            value != correct_answer ~ FALSE) # they are incorrect 
+  )
+```
+
+```{r}
+de1_analysis %>%
+  mutate(correct_answer = case_when(content == "pencil" & type == "stnd" ~5,
+                                    content == "pencil" & type == "ctrl" ~10,
+                                    content == "mag" & type == "stnd" ~45,
+                                    content == "mag" & type == "cntl" ~90),
+         
+         # create a new column for that person's accuracy on that trial
+         # to see how if_else works, when you have one condition and then EVERYTHING ELSE
+         
+         accuracy = if_else(DV == "conf" ~ NA,
+                            value == correct_answer ~ TRUE, # they are correct
+                            value != correct_answer ~ FALSE) # they are incorrect 
+  )
+
+```
+
+```{r}
+
+de1_analysis %>%
+  filter(DV == "resp") %>%
+  group_by(type, accuracy) %>%
+  summarize(n_responses = n())
+  ggplot(aes(x = type, y = n_responses, fill = accuracy)) + geom_bar(stat = "identity")
+```
+
+```{r}
+
+de1_analysis %>%
+  filter(DV == "resp" & type == "stnd" & accuracy == FALSE) %>% 
+  ggplot(aes(x = as.factor(value))) + geom_bar() +
+  facet_grid(~content)
+
+```
+
