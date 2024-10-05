@@ -104,10 +104,10 @@ summary_MFID %>%
 
 MFID_analogy_read %>%
   group_by(qualtrics_id) %>%
+  select(-match_type_0, -match_type_1, -response) %>% #taking additional info out
     pivot_wider(names_from = trial_number,
                 values_from = response_type,
                 names_prefix = "trial ") %>%
-      select(-match_type_0, -match_type_1, -response) %>% #taking additional info out
       select("trial 1", "trial 2", "trial 3", "trial 4", "trial 5", "trial 6", "trial 7", "trial 8") #reordering to make it look better
 
 ```
@@ -126,4 +126,50 @@ MFID_analogy_read %>%
 Show My Work
 
 This code chuck did work, just not in the way that I intended it to. After removing the unnecessary columns, I wanted to reorder the columns so that it would start at trial 1 and increment to trial 8. In the corrected code chunk, I added a prefix of "trials" so that I would be more specific. I then realized that I am still a little unfamiliar with the syntax for certain functions, thus forgetting to put the column names in quotations.
+
+# Week 4 Assignment
+
+```{r}
+
+MFID_REI_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/WeeklyAssignments/tidy_data/MFIndD_REI.csv")
+
+head(MFID_REI_read)
+
+```
+1. It is likely that the columns for "response" and "scored_response" have different column types because they contain different data. The column type for response is <chr> because it is likely that the response can be more than just a number, resulting in the whole column being treated as a non-numeric character. It is likely that the column type for response is double because the column only contains numeric values.
+
+```{r}
+
+MFID_REI_read_fixed <- MFID_REI_read %>%
+  mutate(response = case_when(response == 1 ~ 1, 
+                              response == 2 ~ 2,
+                              response == 3 ~ 3,
+                              response == 4 ~ 4, 
+                              response == 5 ~ 5,
+                              response == "Strongly Agree" ~ 5,
+                              response == "Strongly Disagree" ~ 1))
+MFID_REI_read_fixed
+
+```
+
+```{r}
+
+MFID_REI_read_mut <- MFID_REI_read_fixed %>% 
+  mutate(new_scored_response = case_when(is.na(rev_scoring) == TRUE ~ response,
+                                          rev_scoring == "neg" ~ response - scored_response))
+
+MFID_REI_read_mut
+
+```
+
+```{r}
+
+check <- MFID_REI_read_mut %>%
+  mutate(resp_check = case_when(!is.na(rev_scoring) ~ new_scored_response + scored_response,
+                                is.na(rev_scoring) ~ scored_response)) %>%
+  mutate(comparison = resp_check == response)
+
+check
+
+```
 
