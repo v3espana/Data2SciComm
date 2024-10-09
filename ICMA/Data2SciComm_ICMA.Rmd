@@ -5,6 +5,8 @@ author: "Vincent Espana"
 date: "`r Sys.Date()`"
 ---
 
+# Initial Loading
+
 ```{r}
 library(tidyverse)
 ```
@@ -353,4 +355,94 @@ NA & NA # NA
 
 ```
 
+# ICMA 10/9/2024
+
+scalars, vectors, lists, data frames, tibbles
+
+scalar: single value, like a number or string
+ can me numeric (int, dbl), char, string
+ 
+vector: a series of elements that have the same type
+- numbers can be stored as strings, how to know --> quotations
+
+- because vectors have to have the same type, R will coerce things to be the same type
+
+```{r}
+
+c("1", 2, 3 ,4) #takes value as a string
+
+c(2, 3, 4) #takes values as ints
+
+```
+string has higher precedence than ints during coercion
+
+lists: objects that can store multiple things of different types, including additional vectors --> use list()
+
+```{r}
+
+my_list <- list("letters" = c("A", "L", "J", "H"),
+                "numbers" = 4:8,
+                "more_numbers" = 10:30) 
+
+my_list
+
+```
+single brackets [] will return the list
+double brackets [[]] will return the values within the list; can also use $
+
+data frame: each element is of the same length and are bound together --> will get error if diff length
+
+use data.frame
+
+also use [], [[]], and $ to access elements
+
+tibble:a modern reimagining of the data.frame
+- lazy and surly
+
+create a tibble:
+1. using a list of vectors using tibble()
+2. type out row wise using tribble()
+
+```{r}
+
+age_data <- tribble(
+                    ~id, ~age,
+                    1, 8, 
+                    2, 10, 
+                    3, 8,
+                    5, 9
+  
+)
+
+gender_data <- tribble(
+                        ~id, ~gender,
+                        1, "f",
+                        2, "m",
+                        3, "nb",
+                        4, "m",
+                        6, "f"
+)
+
+age_data
+gender_data
+
+```
+
+```{r}
+
+full_join(age_data, gender_data)
+
+```
+
+```{r}
+
+bind_cols(age_data, gender_data)
+
+```
+
+```{r}
+
+bind_rows(age_data, gender_data)
+
+```
 
