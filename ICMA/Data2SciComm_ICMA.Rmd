@@ -305,6 +305,7 @@ as.character(my_double)
 
 ```
 
+NA introduced by coercion
 NA is logical used as missing value indicator 
 0 is a value, null is a null object
 
@@ -325,6 +326,13 @@ mean(my_values, na.rm = TRUE) #ignore NA
 single or/and will evaulate all
 double or/and will evaulate until one 
 
+prediction:
+true
+true
+true 
+true
+true
+
 ```{r}
 
 (3 / 4) > 0 && (8 + 1 - 7) == 2 # evaluates until one
@@ -344,7 +352,5 @@ NA & TRUE # NA since NA is neither TRUE or FALSE
 NA & NA # NA
 
 ```
-
-}
 
 
