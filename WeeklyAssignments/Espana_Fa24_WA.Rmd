@@ -23,8 +23,7 @@ library(tidyverse)
 
 To figure out how to load a library in RStudio, I used a quick Google search. I entered "how to load libraries in R" into the searched bar and opened the first two links, both of which explained to use the "library()" function. Running an additional code block using the help function certified the contents of those link. After adding it into the code block and running it, I was able to see that the library was successfully loaded into RStudio. I reset R and cleared the outputs and ran it once more to be sure.
 
-https://bookdown.org/nana/intror/install-and-load-packages.html
-https://campus.datacamp.com/courses/intermediate-r/chapter-3-functions?ex=17
+<https://bookdown.org/nana/intror/install-and-load-packages.html> <https://campus.datacamp.com/courses/intermediate-r/chapter-3-functions?ex=17>
 
 ```{r}
 
@@ -34,7 +33,7 @@ https://campus.datacamp.com/courses/intermediate-r/chapter-3-functions?ex=17
 
 Description
 
-The 'tidyverse' is a set of packages that work in harmony because they share common data representations and 'API' design. This package is designed to make it easy to install and load multiple 'tidyverse' packages in a single step. Learn more about the 'tidyverse' at https://www.tidyverse.org.
+The 'tidyverse' is a set of packages that work in harmony because they share common data representations and 'API' design. This package is designed to make it easy to install and load multiple 'tidyverse' packages in a single step. Learn more about the 'tidyverse' at <https://www.tidyverse.org>.
 
 # Week 2 Assignment
 
@@ -43,13 +42,14 @@ The 'tidyverse' is a set of packages that work in harmony because they share com
 MFID_analogy_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/WeeklyAssignments/tidy_data/MFIndD_analogy.csv")
 
 ```
+
 ```{r}
 
 MFID_analogy_read
 
 ```
 
-1. The column that contains the unique identifier for each participant is the "qualtrics_id" column.
+1.  The column that contains the unique identifier for each participant is the "qualtrics_id" column.
 
 2a. There are 792 rows and 6 columns in the dataset. I did not use a specific code chunk for this information because the number of rows and columns are provided when I initially read in the csv file for number 1.
 
@@ -60,7 +60,6 @@ MFID_analogy_read %>%
   count()
 
 ```
-
 
 2b. Using the distinct function, I was able to filter out repeated qualtrics ID's for multiple trials of the same respondee. Therefore, there are 99 individuals in the dataset, as seen in the code chunk above.
 
@@ -78,17 +77,17 @@ MFID_analogy_read %>%
 
 ```{r}
 
-summary_MFID <- MFID_analogy_read %>%
+MFID_summary <- MFID_analogy_read %>%
   group_by(qualtrics_id) %>%
   summarize(relational_matches = sum(response_type == "Rel"))
 
-summary_MFID #make it show up
+MFID_summary #make it show up
   
 ```
 
 ```{r}
 
-summary_MFID %>%
+MFID_summary %>%
   ggplot(aes(x = relational_matches)) +
   geom_histogram(binwidth = 1, fill = "gray", color = "black") +
   labs(title = "Distribution of Relational Matches", 
@@ -98,7 +97,7 @@ summary_MFID %>%
 
 ```
 
-2. The histogram shows that participants generally tend to choose either relational matches or object matches across all trials. This is derived from the fact that an overwhelming majority of participants are at both extremes of the histogram.
+2.  The histogram shows that participants generally tend to choose either relational matches or object matches across all trials. This is derived from the fact that an overwhelming majority of participants are at both extremes of the histogram.
 
 ```{r}
 
@@ -135,17 +134,18 @@ MFID_REI_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/W
 
 head(MFID_REI_read)
 
+MFID_REI_read
+
 ```
-1. It is likely that the columns for "response" and "scored_response" have different column types because they contain different data. The column type for response is <chr> because it is likely that the response can be more than just a number, resulting in the whole column being treated as a non-numeric character. It is likely that the column type for response is double because the column only contains numeric values.
+
+1.  It is likely that the columns for "response" and "scored_response" have different column types because they contain different data. The column type for response is <chr> because it is likely that the response can be more than just a number, resulting in the whole column being treated as a non-numeric character. It is likely that the column type for response is double because the column only contains numeric values.
 
 ```{r}
 
 MFID_REI_read_fixed <- MFID_REI_read %>%
-  mutate(response = case_when(response == 1 ~ 1, 
-                              response == 2 ~ 2,
+  mutate(response = case_when(response == 2 ~ 2,
                               response == 3 ~ 3,
-                              response == 4 ~ 4, 
-                              response == 5 ~ 5,
+                              response == 4 ~ 4,
                               response == "Strongly Agree" ~ 5,
                               response == "Strongly Disagree" ~ 1))
 MFID_REI_read_fixed
@@ -155,8 +155,8 @@ MFID_REI_read_fixed
 ```{r}
 
 MFID_REI_read_mut <- MFID_REI_read_fixed %>% 
-  mutate(new_scored_response = case_when(is.na(rev_scoring) == TRUE ~ response,
-                                          rev_scoring == "neg" ~ response - scored_response))
+  mutate(new_scored_response = case_when(is.na(rev_scoring) == TRUE ~ response ,
+                                          rev_scoring == "neg" ~ 6 - response))
 
 MFID_REI_read_mut
 
@@ -164,12 +164,76 @@ MFID_REI_read_mut
 
 ```{r}
 
-check <- MFID_REI_read_mut %>%
-  mutate(resp_check = case_when(!is.na(rev_scoring) ~ new_scored_response + scored_response,
-                                is.na(rev_scoring) ~ scored_response)) %>%
-  mutate(comparison = resp_check == response)
-
-check
+MFID_REI_read_mut %>%
+  mutate(resp_check = case_when(new_scored_response == scored_response ~ TRUE, 
+                                new_scored_response != scored_response ~ FALSE)
+         ) %>% 
+  distinct(resp_check)
 
 ```
+
+# Week 5 Assignment
+
+```{r}
+
+MFID_REI_read_mut %>% distinct(sub_type) 
+
+REI_summary <- MFID_REI_read_mut %>% group_by(qualtrics_id, sub_type) %>%
+  summarise(total_score = sum(new_scored_response)) 
+
+REI_summary 
+
+```
+
+```{r}
+
+na <- REI_summary %>% 
+  filter(is.na(total_score))
+
+na
+  
+
+```
+
+1b. Yes, there are scores that are NA.
+
+```{r}
+
+REI_sum_notna <- MFID_REI_read_mut %>%
+  group_by(qualtrics_id, sub_type) %>%
+  summarise(total_score = sum(new_scored_response, na.rm = TRUE))
+
+REI_sum_notna
+
+na2 <- REI_sum_notna %>%
+  filter(is.na(total_score))
+
+na2
+
+```
+
+```{r}
+
+MFID_combined <- REI_sum_notna %>%
+  inner_join(MFID_summary)
+
+MFID_combined
+
+```
+
+```{r}
+
+ggplot(MFID_combined, aes(x = total_score, 
+                          y = relational_matches,
+                          color = sub_type)) + 
+  geom_point() +
+  geom_smooth() +
+  labs(title = "Relation Between REI Score and Analogy Score", 
+       x = "REI Total Score",
+       y = "Analogy Score") + 
+  theme_minimal()
+
+```
+
+3. There is some variability in the different best fit lines per sub-type. However,it seems that there is little to no correlation between the total scoring of the REI sub-types and the number of relational matches made. 
 
