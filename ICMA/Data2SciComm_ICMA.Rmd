@@ -446,3 +446,128 @@ bind_rows(age_data, gender_data)
 
 ```
 
+# ICMA 10/16/2024
+
+ITERATIONS AND LOOPS
+- often need to do the same thing over and over again
+- functions help solve this program by packaging together a bunch of code
+- loops help run the same code over and over again through iterations
+
+```{r}
+
+mean(c(1,2,3))
+
+```
+```{r}
+
+(1+2+3)/3
+
+```
+
+
+```{r}
+
+vec <- c(1,2,3)
+
+(vec[1]+vec[2]+vec[3])/length(vec)
+
+```
+for loop iterates over a vector and executes R code after every iteration
+general syntax:
+
+```{r}
+
+for(var in seq){
+  expr
+}
+
+```
+
+example
+
+```{r}
+
+for (i in 1:10) {
+  
+  i <- i^2
+  print(i)
+}
+
+
+```
+
+```{r}
+
+fave_number <- tribble(~name, ~number,
+                       "MC", 8,
+                       "AP", 9,
+                       "NG", 12,
+                       "VE", 6,
+                       "AL", 17,
+                       "AR", 3,
+                       "MC", 7,
+                       "RK", 8,
+                       "AC", 4,
+                       "SC", 21,
+                       "KK", 16,
+                       "RK", 28,
+                       "VK", 17,
+                       "MH", 12
+                        )
+
+```
+
+1. for loop to print fave number
+
+```{r}
+
+for (i in fave_number$number) {
+  
+  print(i)
+  
+}
+
+```
+
+fave_number$number is different than fave_number["number"]... why?
+
+```{r}
+
+typeof(fave_number$number) #type of the vector
+typeof(fave_number["number"]) #type of the list
+
+```
+
+one square bracket means pepper is in packaging in jar
+two square brackt means actual pepper is in jar
+
+```{r}
+
+length(fave_number)
+
+```
+2. output for each person --> __'s fave number is __
+
+```{r}
+
+for (i in seq_along(fave_number$name)) {
+  
+  print(str_c(fave_number$name[i], "'s favorite number is ", fave_number$number[i]))
+  
+}
+
+```
+
+```{r}
+?seq_along
+```
+
+```{r}
+
+mtcars
+
+```
+
+everything(), map(), across()
+
+while(cond) --> while something is true do this thing
