@@ -178,8 +178,9 @@ MFID_REI_read_mut %>%
 
 MFID_REI_read_mut %>% distinct(sub_type) 
 
-REI_summary <- MFID_REI_read_mut %>% group_by(qualtrics_id, sub_type) %>%
-  summarise(total_score = sum(new_scored_response)) 
+REI_summary <- MFID_REI_read_mut %>% 
+  group_by(qualtrics_id, sub_type) %>%
+    summarise(total_score = sum(new_scored_response)) 
 
 REI_summary 
 
@@ -236,4 +237,73 @@ ggplot(MFID_combined, aes(x = total_score,
 ```
 
 3. There is some variability in the different best fit lines per sub-type. However,it seems that there is little to no correlation between the total scoring of the REI sub-types and the number of relational matches made. 
+
+# Week 6 Assignment
+
+1. loading data file
+
+```{r}
+
+MFID_prob <-MFID_analogy_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/WeeklyAssignments/tidy_data/MFIndD_probtask.csv")
+
+MFID_prob
+
+```
+
+2a. create a vector
+
+```{r}
+conditions <- unique(MFID_prob$condition)
+
+conditions # vector to store conditions
+
+```
+2b. calculate mean
+
+```{r}
+
+mean_rt <- numeric(length(conditions))
+
+#filter invalid trials
+valid_trials <- MFID_prob %>%
+  filter(rt_exclu == 0)
+
+for (i in 1:length(conditions)) {
+  
+  condition_data <- valid_trials[valid_trials$condition == conditions[i], ] #only keeping the columns that match the condition in conditions
+  
+  mean_rt[i] <- mean(condition_data$rt, na.rm = TRUE) #put the calculated mean in the mean_rt vector 
+  
+}
+
+mean_rt
+
+```
+logical explanation: 
+
+create a vector for the mean reaction times. in order to find the mean of each condition, i first need to filter out all of the valid trials (where rt_exclu == 0). then i can loop per condition and check where the condition in the valid trials matches one of the conditions in our conditions vector. after that i need to calculate the mean for all of the reactions of that specific condition and put that in our mean reaction time vector.
+
+3. 
+
+```{r}
+
+summary_across <- valid_trials %>% 
+  group_by(across(condition)) %>%
+  summarize(mean_rt = mean(rt, na.rm = TRUE), # find the mean
+            overall_accuracy = mean(correct, na.rm = TRUE)) # find the accuracy
+
+summary_across
+
+```
+
+```{r}
+
+summary_without <- summary_across <- valid_trials %>%
+  group_by(condition) %>%
+  summarize(mean_rt = mean(rt, na.rm = TRUE), # find the mean
+            overall_accuracy = mean(correct, na.rm = TRUE)) #find the accuracy
+
+summary_without
+
+```
 
