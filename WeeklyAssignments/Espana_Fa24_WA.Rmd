@@ -303,7 +303,7 @@ summary_without <- summary_across <- valid_trials %>%
   summarize(mean_rt = mean(rt, na.rm = TRUE), # find the mean
             overall_accuracy = mean(correct, na.rm = TRUE)) #find the accuracy
 
-summary_without
+summary_without 
 
 ```
 
