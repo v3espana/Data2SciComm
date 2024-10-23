@@ -1,0 +1,136 @@
+---
+title: "Data Exercise 2"
+output: html_notebook
+author: "Vincent Espana"
+date: "`r Sys.Date()`"
+---
+
+# libraries
+
+```{r}
+
+library(tidyverse)
+
+```
+
+# data
+
+how to read in data? --> read_csv
+too many files to read --> how can you read 131 files in jumping_data_parker file? --> LOOP, map() function
+
+map(list of files, read_csv
+
+```{r}
+
+files <- list.files(path = "C:/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/DataExercise2/DE2_Parker_UNZIP-BEFORE-USING/jumping_data_parker",
+                    pattern = "*.csv",
+                    full.names = TRUE)
+
+
+```
+
+```{r}
+
+files
+
+```
+
+
+```{r}
+
+convert_columns <- function(file) {
+  
+  file <- file %>%
+  mutate(sex = case_when(sex == FALSE ~ "F",
+                         sex == "M" ~ "M"),
+         date = as.character(date))
+  
+}
+
+```
+
+```{r}
+
+raw_data[[1]] %>%
+  mutate(sex = case_when(sex == FALSE ~ "F",
+                         sex == "M" ~ "M"))
+
+```
+
+```{r}
+
+raw_data <- map(files, read.csv) %>%
+  map(convert_columns) %>%
+  bind_rows()
+
+```
+
+```{r}
+
+# inspect data
+
+raw_data %>%
+  distinct(condition)
+
+raw_data %>% 
+  distinct(laser_trial)
+
+raw_data %>% 
+  distinct(sex)
+
+```
+
+#explore the data
+
+```{r}
+
+summary_data <- raw_data %>%
+  group_by(subject, distance) %>%
+  mutate(succ_rate_NOabort = sum(outcome == 1)/(n() -  sum(outcome == 2)))
+
+```
+
+```{r}
+
+summary_data <- raw_data %>%
+  group_by(subject, distance) %>%
+  filter(outcome != 2)
+  
+```
+
+
+```{r}
+
+summary_data %>% 
+  ggplot(aes(x = succ_rate)) +
+  geom_histogram()
+
+```
+
+
+# plot the data
+
+replicate the figure in the picutre
+
+```{r}
+
+summary_data %>% 
+  ggplot(aes(x = distance,
+             y = succ_rate, 
+             group = subject)) +
+  geom_line() +
+  ylim(0,1)
+
+```
+
+```{r}
+
+summary_data %>% 
+  ggplot(aes(x = distance,
+             y = succ_rate, 
+             group = subject)) +
+  geom_line() +
+  ylim(0,1)
+
+```
+
