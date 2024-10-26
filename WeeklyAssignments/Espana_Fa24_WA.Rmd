@@ -18,6 +18,14 @@ output: html_notebook
 library(tidyverse)
 
 ```
+## ggdist Loading
+
+```{r}
+
+library(ggdist)
+
+```
+
 
 # Week 1 Assignment
 
@@ -244,7 +252,7 @@ ggplot(MFID_combined, aes(x = total_score,
 
 ```{r}
 
-MFID_prob <-MFID_analogy_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/WeeklyAssignments/tidy_data/MFIndD_probtask.csv")
+MFID_prob <- MFID_analogy_read <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/WeeklyAssignments/tidy_data/MFIndD_probtask.csv")
 
 MFID_prob
 
@@ -253,7 +261,8 @@ MFID_prob
 2a. create a vector
 
 ```{r}
-conditions <- unique(MFID_prob$condition)
+conditions <- MFID_prob %>%
+  distinct(condition)
 
 conditions # vector to store conditions
 
@@ -288,7 +297,8 @@ create a vector for the mean reaction times. in order to find the mean of each c
 ```{r}
 
 summary_across <- valid_trials %>% 
-  group_by(across(condition)) %>%
+  group_by(condition) %>% 
+  summarize(across(c(correct, rt))) %>%
   summarize(mean_rt = mean(rt, na.rm = TRUE), # find the mean
             overall_accuracy = mean(correct, na.rm = TRUE)) # find the accuracy
 
@@ -298,7 +308,7 @@ summary_across
 
 ```{r}
 
-summary_without <- summary_across <- valid_trials %>%
+summary_without <- valid_trials %>%
   group_by(condition) %>%
   summarize(mean_rt = mean(rt, na.rm = TRUE), # find the mean
             overall_accuracy = mean(correct, na.rm = TRUE)) #find the accuracy
@@ -306,4 +316,99 @@ summary_without <- summary_across <- valid_trials %>%
 summary_without 
 
 ```
+
+# Week 7 Assignment
+
+```{r}
+
+MFID_prob
+
+```
+
+
+```{r}
+
+MFID_prob %>%
+  group_by(condition) %>%
+    summarise(across(c(rt, correct), mean)) %>%
+      pivot_longer(c(rt, correct)) %>%
+        ggplot(aes(y = value, x = condition)) +
+        geom_point(color = "red") +
+        facet_wrap(~name, scales = "free")
+
+```
+
+1a. From the plot, I assume that a higher proportion of correct scores results from a better reaction time or vice versa. Blob_stacked and dots_EqSizeRand have higher accuracy and a faster reaction time, while blob_shifted and dots_EqSizeSep are lower in accuracy with a slower reaction time.
+
+1b. The first thing that I noticed were the values in the axes of the graphs. Typically, graphs with great variability tend to have large ranges that contribute to conclusions about relationships. For example, I expected to see something along the lines of a higher accuracy results in a slower reaction time. More specifically, the blob_stacked column stood out as it had the highest accuracy but the fastest reaction time.
+
+1c. Some information that I find difficult to see is a clear relationship between the accuracy of the conditions and the mean reaction time. The conclusion I came to in 1a is a pure assumption from looking at it, but I feel as though there are ways to visualize the information better. Further descriptive information of the graph and its axes could also be helpful. There is no title to describe what data we are looking at, and the y-axis in particular lacks information about what the values for each graph are.
+
+2a. summarize the data set
+
+```{r}
+
+sum_prob <- MFID_prob %>%
+  group_by(SubID, condition) %>%
+    summarize(prop_corr = mean(correct))
+
+sum_prob
+
+```
+
+2b. make the plot
+
+```{r}
+
+sum_prob %>%
+  group_by(condition) %>%
+  summarize(mean_prop_corr = mean(prop_corr, na.rm = TRUE)) %>%
+  
+  ggplot(aes(y = mean_prop_corr, 
+             x = condition),
+             scale = 0:1) +
+  
+  stat_summary(fun = mean, geom ="point", color = "red") +
+  
+  theme_minimal() + 
+  
+  labs(x = "Condition", 
+       y = "Mean Proportion of Correct",
+       title = "Mean Accuracy of Responses by Condition on Probability Task") + 
+  
+  coord_cartesian(ylim = c(0:1))
+
+```
+
+2c. To make the graph less misleading, I added a descriptive title and y-axis so the reader knows the graph that they are looking at and what information is being displayed on it. I also changed the scale so that it better shows that the y-axis is a proportion.
+
+3a. add distributional info
+
+```{r}
+
+sum_prob %>%
+  
+  ggplot(aes(y = prop_corr, 
+             x = condition)) +
+  
+  stat_summary(fun = mean, geom = "point", color = "red", size = 3) +
+  
+  geom_dotsinterval(dotsize = 0.5,
+                    slab_color = "lightblue",
+                    slab_alpha = 0.6) +
+  
+  theme_minimal() + 
+  
+  labs(x = "Condition", 
+       y = "Mean Proportion of Correct",
+       title = "Mean Accuracy of Responses by Condition on Probability Task") +
+  
+  ylim(0,1)
+    
+
+```
+
+3b. What does this graph tell us: From my understanding, the dots represent individual cases of proportion correct for the different SubID's. Thus, it allows us to see the variability across the data set and where responses were more concentrated. Overall, it gives us more information about why the mean proportion of correct for each condition is the way it is.
+
+Aesthetics: As seen above, I changed the scale of the y-axis, added a descriptive title and y-axis title, set the theme to minimal. I made the actual mean points larger so that they would stand out more in comparison to the dots. For the geom_dotsintervals, I changed the color to light blue, reduced their size, and lessened their opacity so it didn't overtake the importance of the mean.
 
