@@ -1,14 +1,31 @@
 ---
 title: "D2SC ICMA Notebook"
-output: html_notebook
 author: "Vincent Espana"
 date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+  word_document:
+    toc: true
 ---
+
+```{r}
+
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
 
 # Initial Loading
 
 ```{r}
+
 library(tidyverse)
+
 ```
 
 
@@ -24,10 +41,6 @@ This is where we put plain text
 
 ```{r}
 # this is where we put r code
-```
-
-```{r}
-0hno!This_is.a_nightmare <- "hello"
 ```
 
 ```{r}
@@ -55,9 +68,6 @@ myVector <- c(2, 3, 4)
 ```
 
 ```{r}
-mean(my_vector)
-```
-```{r}
 my_vector <- c(2, 3, 4)
 ```
 
@@ -75,12 +85,12 @@ sd(1:2) ^ 2
 library(tidyverse)
 ```
 
-```{r}
+```{r eval = FALSE}
 #some functions cant be used/need more work
 stats::filter()
 ```
 
-```{r}
+```{r eval = FALSE}
 #does not work
 head(3, billboard)
 ```
@@ -240,7 +250,7 @@ billboard %>%
            into = c("year", "month", "day"))
 ```
 
-```{r}
+```{r eval = FALSE}
 billboard %>%
   unite(col = "date",
         into = c(year, month, day))
@@ -266,7 +276,7 @@ ChickWeight %>%
 kind of diet missing, need more information ^will add above
 noise = random variability
 
-```{r}
+```{r eval = FALSE}
 
 ChickWeight %>%
   ggplot(aes(y = weight,
@@ -434,7 +444,7 @@ full_join(age_data, gender_data)
 
 ```
 
-```{r}
+```{r eval = FALSE}
 
 bind_cols(age_data, gender_data)
 
@@ -475,7 +485,7 @@ vec <- c(1,2,3)
 for loop iterates over a vector and executes R code after every iteration
 general syntax:
 
-```{r}
+```{r eval = FALSE}
 
 for(var in seq){
   expr
@@ -571,3 +581,28 @@ mtcars
 everything(), map(), across()
 
 while(cond) --> while something is true do this thing
+
+# ICMA 10/30/2024
+
+Let's write a sentence that has **bold** and *italics*.
+
+Part 2: create a variable, then write a sentence that uses that variable, bold, and italics.
+
+```{r}
+
+name <- "Vincent"
+
+```
+
+Hi, my name is `r name` and I really have when people use both **bold** and *italics* in the same sentence.
+
+```{r chick-plot, fig.cap = "Chick weight across time"}
+
+ChickWeight %>%
+  ggplot(aes(y = weight,
+             x = Time, 
+             group = Chick)) +
+  geom_line()
+  
+```
+
