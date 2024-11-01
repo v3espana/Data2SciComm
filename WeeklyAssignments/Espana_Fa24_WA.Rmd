@@ -484,4 +484,4 @@ wrangled %>%
 
 ```
 
-4. **Primary Observation:** My **primary observation** from these graphs is that there seems to be a *positive correlation* between reaction time and the proportion correct. When looking at each graph **individually**, it seems that *dots_EqSizeSep* and *blob_shifted* tend to cluster towards lower reaction and low accuracy, *dots_EqSizeRand* tends to have an average reaction time and accuracy, and *blob_stacked cluster* towards a higher reaction time and higher accuracy.
+4. **Primary Observation:** My **primary observation** from these graphs is that there seems to be a *positive correlation* between reaction time and the proportion correct. When looking at each graph **individually**, it seems that *dots_EqSizeSep* and *blob_shifted* tend to cluster towards lower reaction and low accuracy, *dots_EqSizeRand* tends to have an average reaction time and accuracy, and *blob_stacked cluster* towards a higher reaction time and higher accuracy. 
