@@ -2,10 +2,16 @@
 title: "D2SC: Weekly Assignments"
 author: Vincent Espana
 date: "`r Sys.Date()`"
-output: html_notebook
+output: 
+  html_document:
+    df_print: paged
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
 ---
 
-# Initial Loading
+Initial Loading
 
 ```{r}
 
@@ -18,7 +24,8 @@ output: html_notebook
 library(tidyverse)
 
 ```
-## ggdist Loading
+
+ggdist Loading
 
 ```{r}
 
@@ -262,7 +269,8 @@ MFID_prob
 
 ```{r}
 conditions <- MFID_prob %>%
-  distinct(condition)
+  distinct(condition) %>%
+  .$condition
 
 conditions # vector to store conditions
 
@@ -277,9 +285,10 @@ mean_rt <- numeric(length(conditions))
 valid_trials <- MFID_prob %>%
   filter(rt_exclu == 0)
 
-for (i in 1:length(conditions)) {
+for (i in seq_along(conditions)) {
   
-  condition_data <- valid_trials[valid_trials$condition == conditions[i], ] #only keeping the columns that match the condition in conditions
+  condition_data <- valid_trials %>%
+    filter(condition == conditions[i])
   
   mean_rt[i] <- mean(condition_data$rt, na.rm = TRUE) #put the calculated mean in the mean_rt vector 
   
@@ -288,6 +297,8 @@ for (i in 1:length(conditions)) {
 mean_rt
 
 ```
+
+
 logical explanation: 
 
 create a vector for the mean reaction times. in order to find the mean of each condition, i first need to filter out all of the valid trials (where rt_exclu == 0). then i can loop per condition and check where the condition in the valid trials matches one of the conditions in our conditions vector. after that i need to calculate the mean for all of the reactions of that specific condition and put that in our mean reaction time vector.
@@ -412,3 +423,65 @@ sum_prob %>%
 
 Aesthetics: As seen above, I changed the scale of the y-axis, added a descriptive title and y-axis title, set the theme to minimal. I made the actual mean points larger so that they would stand out more in comparison to the dots. For the geom_dotsintervals, I changed the color to light blue, reduced their size, and lessened their opacity so it didn't overtake the importance of the mean.
 
+# Week 8 Assignment
+
+2.
+
+```{r}
+
+wrangled <- MFID_prob %>% 
+  group_by(SubID, condition) %>%
+  summarize(rt = mean(rt, na.rm = TRUE),
+            correct = mean(correct, na.rm = TRUE))
+
+wrangled
+
+```
+
+3a. colors
+
+```{r}
+
+wrangled %>% 
+  
+  ggplot(aes(x = rt, 
+             y = correct,
+             color = condition)) +
+  
+  geom_point(size = 3,
+             alpha = 0.6) +
+  
+  theme_minimal() +
+  
+  labs(title = "Relationship Between Reaction Time and Accuracy Separated by Condition",
+       x = "Average Reaction Time",
+       y = "Proportion Correct",
+       color = "Condition") 
+
+
+```
+
+3b. facets in separate plots
+
+```{r}
+
+wrangled %>% 
+  
+  ggplot(aes(x = rt, 
+             y = correct)) +
+  
+  geom_point(size = 3,
+             alpha = 0.6) +
+  
+  theme_minimal() +
+  
+  labs(title = "Relationship Between Reaction Time and Accuracy Separated by Condition",
+       x = "Average Reaction Time",
+       y = "Proportion Correct",
+       color = "Condition") +
+  
+  facet_wrap(~condition, scales = "free")
+
+```
+
+4. **Primary Observation:** My **primary observation** from these graphs is that there seems to be a *positive correlation* between reaction time and the proportion correct. When looking at each graph **individually**, it seems that *dots_EqSizeSep* and *blob_shifted* tend to cluster towards lower reaction and low accuracy, *dots_EqSizeRand* tends to have an average reaction time and accuracy, and *blob_stacked cluster* towards a higher reaction time and higher accuracy.
