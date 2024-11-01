@@ -1,8 +1,10 @@
 ---
 title: "Data Exercise 2"
-output: html_notebook
 author: "Vincent Espana"
 date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
 ---
 
 # libraries
@@ -49,7 +51,7 @@ convert_columns <- function(file) {
 
 ```
 
-```{r}
+```{r eval = FALSE}
 
 raw_data[[1]] %>%
   mutate(sex = case_when(sex == FALSE ~ "F",
@@ -99,7 +101,7 @@ summary_data <- raw_data %>%
 ```
 
 
-```{r}
+```{r eval = FALSE}
 
 summary_data %>% 
   ggplot(aes(x = succ_rate)) +
