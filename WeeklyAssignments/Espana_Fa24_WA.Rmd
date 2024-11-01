@@ -3,7 +3,7 @@ title: "D2SC: Weekly Assignments"
 author: "Vincent Espana"
 date: "`r Sys.Date()`"
 output: 
-  html_document:
+  html_notebook:
     df_print: paged
     toc: true
     toc_depth: 2
