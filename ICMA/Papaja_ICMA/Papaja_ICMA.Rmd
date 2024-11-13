@@ -80,21 +80,17 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 # Results
 
-(ref:chick-caption) Each chick was weighed every other day from birth to day 20 and on day 21. This plot shows the weight of each chick (y-axis) for each day they were measured (x-axis). Each point is one measurement
-
-```{r chick-plot, fig.cap = "(ref:chick-caption)"}
-
-chick_plot <- ChickWeight %>%
-  ggplot(aes(y = weight, x = Time)) +
-  geom_point()
-  
-```
 
 ```{r}
 
-chick_plot
+overall_difference <- t.test(weight = Diet,
+                             data = filter(ChickWeight, Diet %in% c(1,3)))
+
+apa_output <- apa.print(overall_difference)
 
 ```
+
+There is a significant difference in the average weight of chick who received Diet 1 compared to Diet 3, `r apa_output$full_result`.
 
 
 
