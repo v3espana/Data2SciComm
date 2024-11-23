@@ -1,0 +1,35 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Probtask_Trial.png}
+\caption{\label{fig:trial}Example of Proportional Reasoning Task}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Probtask_formats.png}
+\caption{\label{fig:formats}Example Images Per COndition}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Espana_WA11_files/figure-latex/plot-one-1.pdf}
+\caption{\label{fig:plot-one}Mean Accuracy and Accuracy Variability across Conditions}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Espana_WA11_files/figure-latex/plot-two-1.pdf}
+\caption{\label{fig:plot-two}Scatter Plot of Reaction Time vs.~Proportion Correct by Condition}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Espana_WA11_files/figure-latex/plot-three-1.pdf}
+\caption{\label{fig:plot-three}Mean Proportion Correct and Variability across Condition and Numerator Congruency}
+\end{figure*}
