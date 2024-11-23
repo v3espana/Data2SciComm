@@ -91,7 +91,7 @@ There were four different conditions that changed what kinds of images the parti
 
 # Results
 
-1. Does average performance vary across format type, ignoring all other aspets of the stimuli?
+1. Does average performance vary across format type, ignoring all other aspects of the stimuli?
 
 ```{r}
 
@@ -107,8 +107,6 @@ plot1 <- prob %>%
   geom_dotsinterval(dotsize = 0.5,
                     slab_color = "lightblue",
                     slab_alpha = 0.6) +
-  
-  theme_minimal() + 
   
   scale_x_discrete(labels = c("blob_shifted" =  "Shifted Blob", 
                               "blob_stacked" = "Stacked Blob", 
@@ -150,8 +148,6 @@ plot2 <- prob %>%
   
   geom_point(size = 3,
              alpha = 0.6) +
-  
-  theme_minimal() +
   
   labs(title = "Relationship Between Reaction Time and Accuracy Separated by Condition", # change the labels of the graph
        x = "Average Reaction Time",
@@ -208,8 +204,6 @@ plot3 <- prob %>%
  labs(title = "Proportion Correct by Condition and Number Congruency", #change the labels of the graph
       y = "Proportion Correct",
       x = "Condition") +
-  
-  theme_minimal() +
   
   scale_color_manual(values = c("TRUE" = "lightblue", "FALSE" = "red"),
                      label = c("TRUE" = "Proportions Congruent", "FALSE" = "Proportions Incongruent"))
