@@ -1,11 +1,74 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title             : "Data Exercise 3"
+shorttitle        : "Title"
+
+author: 
+  - name          : "First Author"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "my@email.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+  - name          : "Ernst-August Doelle"
+    affiliation   : "1,2"
+    role:
+      - "Writing - Review & Editing"
+      - "Supervision"
+
+affiliation:
+  - id            : "1"
+    institution   : "Wilhelm-Wundt-University"
+  - id            : "2"
+    institution   : "Konstanz Business School"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  One or two sentences to put the results into a more **general context**.
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
 ---
 
-```{r}
+```{r setup, include = FALSE}
+library("papaja")
 library(tidyverse)
 library(ggdist)
+r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 ```
 
 ```{r}
@@ -25,43 +88,43 @@ e15_error <- read_csv("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/DataE
   select(participant, group, error = error_2_df, error_type)
 ```
 
-# Description
+## Themes
 
 ```{r}
-desc %>%
-  distinct(Code, group_name)
-```
+theme_set(theme_minimal())
 
-```{r}
-desc %>%
-  ggplot(aes(y = no_categories)) +
-  geom_histogram(binwidth = 1,
-                 color = "white")
-```
-```{r}
+theme_update(theme(legend.position = "none"))
 
-desc %>%
-  ggplot(aes(y = no_categories)) +
-  geom_histogram() +
-  facet_grid(~group_name)
+theme_update(scale_fill_viridis_d(option = "plasma"))
 
 ```
 
-We noticed that there's an NA --> lets make sure they're missing values and not just the letters "NA"
+# Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+## Participants
+
+## Material
+
+## Procedure
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+# Results
+
+## Number of Categories
+
+We found differences in number of categories.
 
 ```{r}
 
-desc %>%
-  distinct(group_name)
-
-```
-
-We also noticed that there seems to be a larger sample (i.e., more overall counts for the english mono and non-asian mutli groups. let's see if that's true/what the sample sizes are)
-
-```{r}
-
-desc %>%
-  count(group_name)
+grouped_cat_desc <- desc %>%
+  group_by(group_name) %>%
+  summarize(mean = mean(no_categories),
+            sd = sd(no_categories)) %>%
+  mutate(mean_sd = str_c(round(mean,2), "(", round(sd,2), ")"))
 
 ```
 
@@ -99,54 +162,11 @@ desc %>%
 
 ```
 
-## Themes
-
-```{r}
-theme_set(theme_minimal())
-
-theme_update(theme(legend.position = "none"))
-
-theme_update(scale_fill_viridis_d(option = "plasma"))
-
-```
- 
-
-## Plot 1
-
-```{r}
-
-grouped_cat_desc <- desc %>%
-  group_by(group_name) %>%
-  summarize(mean = mean(no_categories),
-            sd = sd(no_categories)) %>%
-  mutate(mean_sd = str_c(round(mean,2), "(", round(sd,2), ")"))
-
-```
-
-```{r}
-
-filter(grouped_cat_desc, group_name == "east_asian")$mean_sd
-
-```
-## Plot 2 
-
-My goal here is to end up with a dataset that has these columns:
-
-participant
-group
-error
-error_type
+## Error Patterns
 
 ```{r}
 
 error_data <- bind_rows(e2_error, e5_error, e15_error)
-
-```
-
-```{r}
-
-error_data %>%
-  distinct(group)
 
 ```
 
@@ -170,3 +190,12 @@ error_data %>%
   theme(legend.position = "right")
 ```
 
+# Discussion
+
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
