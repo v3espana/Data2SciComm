@@ -606,3 +606,44 @@ ChickWeight %>%
   
 ```
 
+# ICMA 12/2/2024
+
+```{r}
+
+months <- c("Apr", "Dec", "Jan", "Feb", "Mar")
+
+```
+
+```{r}
+
+sort(months)
+
+```
+
+```{r}
+
+months_base <- factor(months) #doesn't change the order of the actual thing, but will use levels when plotting
+#default is alphabetical
+
+```
+
+```{r}
+
+months_base <- factor(months, 
+                 levels = c("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Dec"))
+
+months
+
+```
+
+```{r}
+
+months_forcats <- fct(months, 
+                      levels = c("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Dec"))
+
+months_forcats
+
+```
+
+if a level doesn't exist in the data set (example: removing "Dec") will make it an NA when changing it to factor
+fct will through an error, factor will not
