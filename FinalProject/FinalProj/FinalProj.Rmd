@@ -1,0 +1,258 @@
+---
+title: Predicting Cognitive States Through EEG Sensors and Machine Learning
+author:
+  - name: Vincent Espana
+    affil: 1
+affiliation:
+  - num: 1
+    address: Department of Cognitive Science, Rutgers University
+column_numbers: 3
+output: 
+  posterdown::posterdown_html:
+    self_contained: false
+bibliography: packages.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r initial-loading, include=FALSE}
+
+library(tidyverse)
+library(knitr)
+library(foreign)
+library(ggplot2)
+
+data <- read.arff("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/FinalProject/eyestate.arff")
+
+```
+
+# Introduction
+
+As AI technologies and machine learning continue to advance, its integration into everyday life has exponentially increased in recent years. One of the many examples of this is Tesla Autopilot and Full Self-Driving, whose  semi-autonomous technologies allows cars to accelarate, make turns, and even parallel park! Yet, this innovative technology still requires an active driver at the wheel and accounts for yawning, blinking, and many more fatigue indicators to track the driver's current cognitive state. This research project aims to investigate brainwave activity, in hopes that a machine learning model, such as Tesla Autopilot and Full Self-Driving, can better predict a driver's cognitive state.
+
+# Research Question
+
+How do **variations** in EEG sensor values between open and closed eye states reflect changes in brainwave activities, and how can this information be used to train machine learning models for **accurately predicting** cognitive states like attention and mental fatigue?
+
+More specifically, this research aims to determine which sensors are **most predictive** of cognitive state during open and closed eye states.
+
+# Data Source
+
+The dataset used in this study is the *EEG Eye State* database from the UC Irvine Machine Learning Repository. It contains EEG recordings from **14** different EEG sensors, in which participants were asked to perform tasks with either their eyes **open** (0) or **closed** (1). These sensors are positioned on different areas of the head to measure brainwave activity corresponding to various brain lobes. Each lobe has distinct functions:
+
+- Frontal Lobe: Responsible for decision-making, emotional regulation, and attention
+- Fronto-Central Lobe: Plays a key role in motor control 
+- Temporal Lobe: Involved in hearing, language recognition, and memory
+- Parietal Lobe: Processes sensory information, such as touch, temperature, pressure, and pain
+- Occipital Lobe: Specializes in visual processing
+
+```{r eeg-image, fig.cap="EEG Sensors"}
+
+knitr::include_graphics("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/FinalProject/FinalProj/electrodespos.png")
+  
+```
+  
+# Results and Interpretation
+
+1. Does average EEG sensor values between eye states vary across the different sensors?
+
+```{r plot1, echo=FALSE, fig.cap="Average EEG Values Across Sensors Separated By Eye State", fig.width = 10, fig.height = 8, fig.align = "center"}
+
+# remove major outliers for each sensor
+plot1_cleaned <- data %>%
+  pivot_longer(cols = -eyeDetection, names_to = "Sensor", values_to = "Value") %>%
+  group_by(Sensor) %>%
+  mutate(Q1 = quantile(Value, 0.01, na.rm = TRUE),
+         Q3 = quantile(Value, 0.99, na.rm = TRUE),
+         IQR = Q3 - Q1,
+         lower_bound = Q1 - 1.5 * IQR,
+         upper_bound = Q3 + 1.5 * IQR) %>%
+  filter(Value >= lower_bound & Value <= upper_bound) %>%
+  ungroup() %>%
+  mutate(eyeDetection = factor(eyeDetection, levels = c(0, 1), labels = c("Open", "Closed")))
+
+# calculate group means
+sensor_means <- plot1_cleaned %>%
+  group_by(eyeDetection, Sensor) %>%
+  summarise(Mean = mean(Value, na.rm = TRUE), .groups = "drop")
+
+# plot the means
+ggplot(plot1_cleaned, aes(x = Sensor, y = Value, color = eyeDetection)) +
+  # add points for the means
+  geom_point(data = sensor_means, aes(x = Sensor, y = Mean, color = eyeDetection),
+             size = 4, stroke = 1.5, position = position_dodge(width = 0.5)) +
+  labs(title = "Comparison of Mean Sensor Values by Eye State",
+       x = "Sensor",
+       y = "Signal Value",
+       color = "Eye State",
+       shape = "Eye State") +
+  scale_color_manual(name = "Eye State",
+                    labels = c("Open (0)", "Closed (1)"),
+                    values = c("red", "cyan"))+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+    text = element_text(size = 16),
+    legend.position = "top",
+    legend.title = element_text(face = "bold")
+  )
+
+```
+
+
+This plot compares the mean signal value of each sensor for both open and closed eye states. Excluding the F8 sensor, the average signal value for all sensors for open eye states were less than or equal to the average signal value for closed eye states. Some sensors that seem particularly important are the AF3, AF4, F8, and FC6 sensors, as they had the largest average difference in signal values between open and closed eye states.
+
+2. Are the visual processing (O1 and O2) sensors indicative of cognitive state?
+
+```{r table-cleaning, include = FALSE}
+
+# filter for closed
+closed_data <- data[data$eyeDetection == 1, ]
+
+# filter for open
+open_data <- data[data$eyeDetection == 0, ]
+
+# set bounds for closed O1
+Q1 <- quantile(closed_data$O1, 0.01)
+Q3 <- quantile(closed_data$O1, 0.99)
+IQR <- Q3 - Q1
+
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# hold the cleaned data in new variable
+closedO1data_cleaned <- closed_data[closed_data$O1 >= lower_bound & closed_data$O1 <= upper_bound, ]
+
+# set bounds for open O1
+Q1 <- quantile(open_data$O1, 0.01)
+Q3 <- quantile(open_data$O1, 0.99)
+IQR <- Q3 - Q1
+
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# hold the cleaned data in new variable
+openO1data_cleaned <- open_data[open_data$O1 >= lower_bound & open_data$O1 <= upper_bound, ]
+
+# set bounds for closed O2
+Q1 <- quantile(closed_data$O2, 0.01)
+Q3 <- quantile(closed_data$O2, 0.99)
+IQR <- Q3 - Q1
+
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# hold the cleaned data in new variable
+closedO2data_cleaned <- closed_data[closed_data$O2 >= lower_bound & closed_data$O2 <= upper_bound, ]
+
+# set bounds for open O2
+Q1 <- quantile(open_data$O2, 0.01)
+Q3 <- quantile(open_data$O2, 0.99)
+IQR <- Q3 - Q1
+
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+# hold the cleaned data in new variable
+openO2data_cleaned <- open_data[open_data$O2 >= lower_bound & open_data$O2 <= upper_bound, ]
+
+```
+
+```{r table, echo=FALSE}
+
+# calculating min, max, mean for O1 closed
+closedO1_min <- min(closedO1data_cleaned$O1, na.rm = TRUE)
+closedO1_max <- max(closedO1data_cleaned$O1, na.rm = TRUE)
+closedO1_mean <- mean(closedO1data_cleaned$O1, na.rm = TRUE)
+closedO1_std <- sd(closedO1data_cleaned$O1, na.rm = TRUE)
+
+# calculating min, max, mean for O1 open
+openO1_min <- min(openO1data_cleaned$O1, na.rm = TRUE)
+openO1_max <- max(openO1data_cleaned$O1, na.rm = TRUE)
+openO1_mean <- mean(openO1data_cleaned$O1, na.rm = TRUE)
+openO1_std <- sd(openO1data_cleaned$O1, na.rm = TRUE)
+
+# calculating min, max, mean for O2 closed
+closedO2_min <- min(closedO2data_cleaned$O2, na.rm = TRUE)
+closedO2_max <- max(closedO2data_cleaned$O2, na.rm = TRUE)
+closedO2_mean <- mean(closedO2data_cleaned$O2, na.rm = TRUE)
+closedO2_std <- sd(closedO2data_cleaned$O2, na.rm = TRUE)
+
+# calculating min, max, mean for O2 open
+openO2_min <- min(openO2data_cleaned$O2, na.rm = TRUE)
+openO2_max <- max(openO2data_cleaned$O2, na.rm = TRUE)
+openO2_mean <- mean(openO2data_cleaned$O2, na.rm = TRUE)
+openO2_std <- sd(openO2data_cleaned$O2, na.rm = TRUE)
+
+# make the table
+table <- as.table(rbind(c(openO1_min, openO1_max, openO1_mean, openO1_std), 
+                        c(closedO1_min, closedO1_max, closedO1_mean, closedO1_std), 
+                        c(openO2_min, openO2_max, openO2_mean, openO2_std), 
+                        c(closedO2_min, closedO2_max, closedO2_mean, closedO2_std)))
+
+dimnames(table) <- list(Sensor = c("O1 Open", "O1 Closed", "O2 Open", "O2 Closed"),
+                        Metric = c("Min.", "Max.", "Mean", "Std. Dev."))
+  
+
+kable(table, caption = "Summary Statistics for Sensors O1 and O2")
+
+```
+
+This table provides summary statistics for the O1 and O2 sensors, which are specific to visual processing. The resulting values contained in this table do not provide any indication of whether or not these sensors are particularly important when predicting cognitive state, as the minimum, maximum, and mean signal values were similar across open and closed eye states. The standard deviation of the O1 sensor with a closed eye state is significantly higher than the others, alluding that the distribution of values might be important to investigate.
+
+3. What do frontal lobe sensors tell us and how can this information be used to by machine learning models to predict cognitive state?
+
+```{r plot2-cleaning, include = FALSE}
+
+#there are some outliers in the data set that are affecting my plots
+#taking out the outliers 
+
+#setting ranges for the quartiles
+Q1 <- quantile(data$AF3, 0.01)
+Q3 <- quantile(data$AF3, 0.99)
+IQR <- Q3 - Q1
+
+#set the bounds
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+
+#hold the cleaned data in new variable
+plot2_cleaned <- data[data$AF3 >= lower_bound & data$AF3 <= upper_bound, ]
+
+```
+
+```{r plot2, echo = FALSE, fig.cap="Median Signal Value and Variability of AF3 Sensor", fig.width = 10, fig.height = 8, fig.align = "center"}
+
+plot2_cleaned %>% 
+  ggplot(aes(x = eyeDetection, y = AF3, fill = eyeDetection)) +
+  geom_violin(alpha = 0.4) +  # Add a violin plot for distribution
+  geom_boxplot(width = 0.2, outlier.shape = NA) +  # Narrow boxplot overlay
+  labs(title = "EEG Sensor (AF3) Distribution by Eye State",
+       x = "Eye Detection",
+       y = "EEG Signal Value (μV)") + 
+  scale_fill_manual(name = "Eye State",
+                    labels = c("Open (0)", "Closed (1)"),
+                    values = c("red", "cyan")) +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+    legend.position = "top",
+    legend.title = element_text(face = "bold")) 
+
+
+```
+This plot further investigates the AF3 sensor. This sensor tells us that the range of signal values may be more significant that the mean signal value. Therefore, machine learning models working to predict cognitive states should investigate the underlying distribution of signal values across different sensors in order to accurately predict cognitive state.
+
+# Conclusion
+
+This research explored the relationship between open and closed eye states and EEG signal values across multiple sensors. Results consistently demonstrated that closed eye states produced a slightly higher mean signal value compared to open eye states. In addition, investigating specific sensors showed that the range of signal values for open states are much larger than that of closed states. For machine learning models to better predict a driver's cognitive state based on brainwave activity, it is important to place an emphasis on these findings as it may aid in improving semi-autonomous functions, such as Tesla Autopilot and Full Self-Driving.
+
+```{r, include=FALSE}
+knitr::write_bib(c('knitr','rmarkdown','posterdown','pagedown', 'tidyverse', 'foreign', 'ggplot2'), 'packages.bib')
+```
+
+# References
+1. Autopilot and full self-driving (supervised): Tesla Support. Tesla. (n.d.). https://www.tesla.com/support/autopilot 
+2. Eeg Eye State. UCI Machine Learning Repository. (n.d.). https://archive.ics.uci.edu/dataset/264/eeg+eye+state 
+3. Hou, X. (2015, October). Location of 14 electrodes of emotiv EEG device. | download scientific diagram. ResearchGate. https://www.researchgate.net/figure/Location-of-14-electrodes-of-Emotiv-EEG-device_fig1_283441559 
+
