@@ -30,9 +30,9 @@ data <- read.arff("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/FinalProj
 
 # Introduction
 
-As AI technologies and machine learning continue to advance, its integration into everyday life has exponentially increased in recent years. One of the many examples of this is Tesla Autopilot and Full Self-Driving, whose  semi-autonomous technologies allows cars to accelarate, make turns, and even parallel park! Yet, this innovative technology still requires an active driver at the wheel and accounts for yawning, blinking, and many more fatigue indicators to track the driver's current cognitive state. This research project aims to investigate brainwave activity, in hopes that a machine learning model, such as Tesla Autopilot and Full Self-Driving, can better predict a driver's cognitive state.
+As AI technologies and machine learning continue to advance, its integration into everyday life has exponentially increased in recent years. This research investigates brainwave activity for machine learning models to better predict cognitive states using EEG sensors. Identifying patterns could improve AI decision-making systems, such as Tesla Autopilot and Full Self-Driving whose semi-autonomous technologies allows cars to accelerate, make turns, and even parallel park, all the while tracking the driver's cognitive state [@tesla_autopilot].
 
-# Research Question
+# Research Questions
 
 How do **variations** in EEG sensor values between open and closed eye states reflect changes in brainwave activities, and how can this information be used to train machine learning models for **accurately predicting** cognitive states like attention and mental fatigue?
 
@@ -40,21 +40,22 @@ More specifically, this research aims to determine which sensors are **most pred
 
 # Data Source
 
-The dataset used in this study is the *EEG Eye State* database from the UC Irvine Machine Learning Repository. It contains EEG recordings from **14** different EEG sensors, in which participants were asked to perform tasks with either their eyes **open** (0) or **closed** (1). These sensors are positioned on different areas of the head to measure brainwave activity corresponding to various brain lobes. Each lobe has distinct functions:
+The dataset used in this study is the *EEG Eye State* database from the UC Irvine Machine Learning Repository. It contains EEG recordings from **14** different electroencephalogram (EEG) sensors, in which participants were asked to perform tasks with either their eyes **open** (0) or **closed** (1) [@roesler2013eeg]. These sensors are positioned on different areas of the head to measure brainwave activity corresponding to various brain lobes. Each lobe has distinct functions [@jawabri2023cerebral]:
 
-- Frontal Lobe: Responsible for decision-making, emotional regulation, and attention
+- Frontal Lobe: Responsible for decision-making, emotion regulation, and attention
 - Fronto-Central Lobe: Plays a key role in motor control 
 - Temporal Lobe: Involved in hearing, language recognition, and memory
 - Parietal Lobe: Processes sensory information, such as touch, temperature, pressure, and pain
 - Occipital Lobe: Specializes in visual processing
 
-```{r eeg-image, fig.cap="EEG Sensors"}
+```{r eeg-image, fig.cap="EEG Sensors by Emotiv [@hou2015electrodes]", fig.align='center'}
 
 knitr::include_graphics("/Users/vince/OneDrive/Documents/GitHub/Data2SciComm/FinalProject/FinalProj/electrodespos.png")
   
 ```
   
 # Results and Interpretation
+*Prior to figure creation, the data was cleaned to remove significant outliers that were affecting the overall findings of this research. The data was not altered or changed in any way during cleaning. Plots were created using* **tidyverse** *and* **ggplot** *packages [@R-tidyverse; @R-ggplot2].*
 
 1. Does average EEG sensor values between eye states vary across the different sensors?
 
@@ -84,8 +85,8 @@ ggplot(plot1_cleaned, aes(x = Sensor, y = Value, color = eyeDetection)) +
   geom_point(data = sensor_means, aes(x = Sensor, y = Mean, color = eyeDetection),
              size = 4, stroke = 1.5, position = position_dodge(width = 0.5)) +
   labs(title = "Comparison of Mean Sensor Values by Eye State",
-       x = "Sensor",
-       y = "Signal Value",
+       x = "EEG Sensor",
+       y = "EEG Signal Value (μV)",
        color = "Eye State",
        shape = "Eye State") +
   scale_color_manual(name = "Eye State",
@@ -93,15 +94,16 @@ ggplot(plot1_cleaned, aes(x = Sensor, y = Value, color = eyeDetection)) +
                     values = c("red", "cyan"))+
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
-    text = element_text(size = 16),
+    text = element_text(size = 20),
     legend.position = "top",
-    legend.title = element_text(face = "bold")
+    legend.title = element_text(face = "bold"),
+    plot.background = element_rect(color = "black", linewidth = 1)
   )
 
 ```
 
 
-This plot compares the mean signal value of each sensor for both open and closed eye states. Excluding the F8 sensor, the average signal value for all sensors for open eye states were less than or equal to the average signal value for closed eye states. Some sensors that seem particularly important are the AF3, AF4, F8, and FC6 sensors, as they had the largest average difference in signal values between open and closed eye states.
+This plot compares the mean signal value of each sensor for both open and closed eye states. Excluding the F8 sensor, the average signal value for all sensors for open eye states were less than or equal to the average signal value for closed eye states. The AF3, F4, F8, and FC6 sensors exhibit significant differences in mean sensor values, suggesting their importance in distinguishing cognitive states.
 
 2. Are the visual processing (O1 and O2) sensors indicative of cognitive state?
 
@@ -199,7 +201,7 @@ kable(table, caption = "Summary Statistics for Sensors O1 and O2")
 
 ```
 
-This table provides summary statistics for the O1 and O2 sensors, which are specific to visual processing. The resulting values contained in this table do not provide any indication of whether or not these sensors are particularly important when predicting cognitive state, as the minimum, maximum, and mean signal values were similar across open and closed eye states. The standard deviation of the O1 sensor with a closed eye state is significantly higher than the others, alluding that the distribution of values might be important to investigate.
+This table provides summary statistics for the O1 and O2 sensors, which are specific to visual processing. The resulting values contained in this table do not provide any indication of whether or not these sensors are particularly important when predicting cognitive state, as the minimums, maximums, and means were similar across eye states. The standard deviation of the O1 sensor indicates that the underlying distributions may be significant.
 
 3. What do frontal lobe sensors tell us and how can this information be used to by machine learning models to predict cognitive state?
 
@@ -226,8 +228,8 @@ plot2_cleaned <- data[data$AF3 >= lower_bound & data$AF3 <= upper_bound, ]
 
 plot2_cleaned %>% 
   ggplot(aes(x = eyeDetection, y = AF3, fill = eyeDetection)) +
-  geom_violin(alpha = 0.4) +  # Add a violin plot for distribution
-  geom_boxplot(width = 0.2, outlier.shape = NA) +  # Narrow boxplot overlay
+  geom_violin(alpha = 0.4) +  # add a violin plot for
+  geom_boxplot(width = 0.2, outlier.shape = NA) +  # make boxplot smaller
   labs(title = "EEG Sensor (AF3) Distribution by Eye State",
        x = "Eye Detection",
        y = "EEG Signal Value (μV)") + 
@@ -235,24 +237,18 @@ plot2_cleaned %>%
                     labels = c("Open (0)", "Closed (1)"),
                     values = c("red", "cyan")) +
   theme_minimal() +
-  theme(text = element_text(size = 16),
+  theme(text = element_text(size = 20),
     legend.position = "top",
-    legend.title = element_text(face = "bold")) 
+    legend.title = element_text(face = "bold"),
+    plot.background = element_rect(color = "black", linewidth = 1)
+    ) 
 
 
 ```
-This plot further investigates the AF3 sensor. This sensor tells us that the range of signal values may be more significant that the mean signal value. Therefore, machine learning models working to predict cognitive states should investigate the underlying distribution of signal values across different sensors in order to accurately predict cognitive state.
+This plot further investigates the AF3 sensor. This sensor tells us that the range of signal values may be more significant that the mean signal value.
 
 # Conclusion
 
-This research explored the relationship between open and closed eye states and EEG signal values across multiple sensors. Results consistently demonstrated that closed eye states produced a slightly higher mean signal value compared to open eye states. In addition, investigating specific sensors showed that the range of signal values for open states are much larger than that of closed states. For machine learning models to better predict a driver's cognitive state based on brainwave activity, it is important to place an emphasis on these findings as it may aid in improving semi-autonomous functions, such as Tesla Autopilot and Full Self-Driving.
-
-```{r, include=FALSE}
-knitr::write_bib(c('knitr','rmarkdown','posterdown','pagedown', 'tidyverse', 'foreign', 'ggplot2'), 'packages.bib')
-```
+Results consistently demonstrate that closed eye states produced a slightly higher mean signal value compared to open eye states. For many of the frontal lobe sensors (AF3, AF4, F8, FC6), a lower signal value for open states suggests that the frontal lobe is less active as cognitive process are more focused on visual inputs. In addition, investigating specific sensors shows that the range of signal values for open states are much larger than that of closed states. For machine learning systems to accurately predict cognitive state, the variability in signal range between open and closed eye states may aid in distinguishing focus, attention, and fatigue. These findings can drastically improve semi-autonomous AI driving systems, hopefully reducing fatigue-related accidents. Continued research using EEG sensors in active-driving scenarios could further enhance cognitive state prediction models.
 
 # References
-1. Autopilot and full self-driving (supervised): Tesla Support. Tesla. (n.d.). https://www.tesla.com/support/autopilot 
-2. Eeg Eye State. UCI Machine Learning Repository. (n.d.). https://archive.ics.uci.edu/dataset/264/eeg+eye+state 
-3. Hou, X. (2015, October). Location of 14 electrodes of emotiv EEG device. | download scientific diagram. ResearchGate. https://www.researchgate.net/figure/Location-of-14-electrodes-of-Emotiv-EEG-device_fig1_283441559 
-

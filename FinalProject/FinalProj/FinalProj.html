@@ -295,32 +295,33 @@ font-size: 20pt;
 <div class='poster_body'>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>As AI technologies and machine learning continue to advance, its integration into everyday life has exponentially increased in recent years. One of the many examples of this is Tesla Autopilot and Full Self-Driving, whose semi-autonomous technologies allows cars to accelarate, make turns, and even parallel park! Yet, this innovative technology still requires an active driver at the wheel and accounts for yawning, blinking, and many more fatigue indicators to track the driver’s current cognitive state. This research project aims to investigate brainwave activity, in hopes that a machine learning model, such as Tesla Autopilot and Full Self-Driving, can better predict a driver’s cognitive state.</p>
+<p>As AI technologies and machine learning continue to advance, its integration into everyday life has exponentially increased in recent years. This research investigates brainwave activity for machine learning models to better predict cognitive states using EEG sensors. Identifying patterns could improve AI decision-making systems, such as Tesla Autopilot and Full Self-Driving whose semi-autonomous technologies allows cars to accelerate, make turns, and even parallel park, all the while tracking the driver’s cognitive state <span class="citation">(Tesla Support n.d.)</span>.</p>
 </div>
-<div id="research-question" class="section level1">
-<h1>Research Question</h1>
+<div id="research-questions" class="section level1">
+<h1>Research Questions</h1>
 <p>How do <strong>variations</strong> in EEG sensor values between open and closed eye states reflect changes in brainwave activities, and how can this information be used to train machine learning models for <strong>accurately predicting</strong> cognitive states like attention and mental fatigue?</p>
 <p>More specifically, this research aims to determine which sensors are <strong>most predictive</strong> of cognitive state during open and closed eye states.</p>
 </div>
 <div id="data-source" class="section level1">
 <h1>Data Source</h1>
-<p>The dataset used in this study is the <em>EEG Eye State</em> database from the UC Irvine Machine Learning Repository. It contains EEG recordings from <strong>14</strong> different EEG sensors, in which participants were asked to perform tasks with either their eyes <strong>open</strong> (0) or <strong>closed</strong> (1). These sensors are positioned on different areas of the head to measure brainwave activity corresponding to various brain lobes. Each lobe has distinct functions:</p>
+<p>The dataset used in this study is the <em>EEG Eye State</em> database from the UC Irvine Machine Learning Repository. It contains EEG recordings from <strong>14</strong> different electroencephalogram (EEG) sensors, in which participants were asked to perform tasks with either their eyes <strong>open</strong> (0) or <strong>closed</strong> (1) <span class="citation">(Roesler 2013)</span>. These sensors are positioned on different areas of the head to measure brainwave activity corresponding to various brain lobes. Each lobe has distinct functions <span class="citation">(Jawabri and Sharma 2023)</span>:</p>
 <ul>
-<li>Frontal Lobe: Responsible for decision-making, emotional regulation, and attention</li>
+<li>Frontal Lobe: Responsible for decision-making, emotion regulation, and attention</li>
 <li>Fronto-Central Lobe: Plays a key role in motor control</li>
 <li>Temporal Lobe: Involved in hearing, language recognition, and memory</li>
 <li>Parietal Lobe: Processes sensory information, such as touch, temperature, pressure, and pain</li>
 <li>Occipital Lobe: Specializes in visual processing</li>
 </ul>
-<div class="figure"><span style="display:block;" id="fig:eeg-image"></span>
-<img src="electrodespos.png" alt="EEG Sensors"  />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:eeg-image"></span>
+<img src="electrodespos.png" alt="EEG Sensors by Emotiv [@hou2015electrodes]"  />
 <p class="caption">
-Figure 1: EEG Sensors
+Figure 1: EEG Sensors by Emotiv <span class="citation">(Hou 2015)</span>
 </p>
 </div>
 </div>
 <div id="results-and-interpretation" class="section level1">
 <h1>Results and Interpretation</h1>
+<p><em>Prior to figure creation, the data was cleaned to remove significant outliers that were affecting the overall findings of this research. The data was not altered or changed in any way during cleaning. Plots were created using</em> <strong>tidyverse</strong> <em>and</em> <strong>ggplot</strong> <em>packages <span class="citation">(Wickham 2023; Wickham et al. 2024)</span>.</em></p>
 <ol style="list-style-type: decimal">
 <li>Does average EEG sensor values between eye states vary across the different sensors?</li>
 </ol>
@@ -330,7 +331,7 @@ Figure 1: EEG Sensors
 Figure 2: Average EEG Values Across Sensors Separated By Eye State
 </p>
 </div>
-<p>This plot compares the mean signal value of each sensor for both open and closed eye states. Excluding the F8 sensor, the average signal value for all sensors for open eye states were less than or equal to the average signal value for closed eye states. Some sensors that seem particularly important are the AF3, AF4, F8, and FC6 sensors, as they had the largest average difference in signal values between open and closed eye states.</p>
+<p>This plot compares the mean signal value of each sensor for both open and closed eye states. Excluding the F8 sensor, the average signal value for all sensors for open eye states were less than or equal to the average signal value for closed eye states. The AF3, F4, F8, and FC6 sensors exhibit significant differences in mean sensor values, suggesting their importance in distinguishing cognitive states.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>Are the visual processing (O1 and O2) sensors indicative of cognitive state?</li>
 </ol>
@@ -376,7 +377,7 @@ Figure 2: Average EEG Values Across Sensors Separated By Eye State
 </tr>
 </tbody>
 </table>
-<p>This table provides summary statistics for the O1 and O2 sensors, which are specific to visual processing. The resulting values contained in this table do not provide any indication of whether or not these sensors are particularly important when predicting cognitive state, as the minimum, maximum, and mean signal values were similar across open and closed eye states. The standard deviation of the O1 sensor with a closed eye state is significantly higher than the others, alluding that the distribution of values might be important to investigate.</p>
+<p>This table provides summary statistics for the O1 and O2 sensors, which are specific to visual processing. The resulting values contained in this table do not provide any indication of whether or not these sensors are particularly important when predicting cognitive state, as the minimums, maximums, and means were similar across eye states. The standard deviation of the O1 sensor indicates that the underlying distributions may be significant.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>What do frontal lobe sensors tell us and how can this information be used to by machine learning models to predict cognitive state?</li>
 </ol>
@@ -386,19 +387,34 @@ Figure 2: Average EEG Values Across Sensors Separated By Eye State
 Figure 3: Median Signal Value and Variability of AF3 Sensor
 </p>
 </div>
-<p>This plot further investigates the AF3 sensor. This sensor tells us that the range of signal values may be more significant that the mean signal value. Therefore, machine learning models working to predict cognitive states should investigate the underlying distribution of signal values across different sensors in order to accurately predict cognitive state.</p>
+<p>This plot further investigates the AF3 sensor. This sensor tells us that the range of signal values may be more significant that the mean signal value.</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>This research explored the relationship between open and closed eye states and EEG signal values across multiple sensors. Results consistently demonstrated that closed eye states produced a slightly higher mean signal value compared to open eye states. In addition, investigating specific sensors showed that the range of signal values for open states are much larger than that of closed states. For machine learning models to better predict a driver’s cognitive state based on brainwave activity, it is important to place an emphasis on these findings as it may aid in improving semi-autonomous functions, such as Tesla Autopilot and Full Self-Driving.</p>
+<p>Results consistently demonstrate that closed eye states produced a slightly higher mean signal value compared to open eye states. For many of the frontal lobe sensors (AF3, AF4, F8, FC6), a lower signal value for open states suggests that the frontal lobe is less active as cognitive process are more focused on visual inputs. In addition, investigating specific sensors shows that the range of signal values for open states are much larger than that of closed states. For machine learning systems to accurately predict cognitive state, the variability in signal range between open and closed eye states may aid in distinguishing focus, attention, and fatigue. These findings can drastically improve semi-autonomous AI driving systems, hopefully reducing fatigue-related accidents. Continued research using EEG sensors in active-driving scenarios could further enhance cognitive state prediction models.</p>
 </div>
-<div id="references" class="section level1">
+<div id="references" class="section level1 unnumbered">
 <h1>References</h1>
-<ol style="list-style-type: decimal">
-<li>Autopilot and full self-driving (supervised): Tesla Support. Tesla. (n.d.). <a href="https://www.tesla.com/support/autopilot" class="uri">https://www.tesla.com/support/autopilot</a></li>
-<li>Eeg Eye State. UCI Machine Learning Repository. (n.d.). <a href="https://archive.ics.uci.edu/dataset/264/eeg+eye+state" class="uri">https://archive.ics.uci.edu/dataset/264/eeg+eye+state</a></li>
-<li>Hou, X. (2015, October). Location of 14 electrodes of emotiv EEG device. | download scientific diagram. ResearchGate. <a href="https://www.researchgate.net/figure/Location-of-14-electrodes-of-Emotiv-EEG-device_fig1_283441559" class="uri">https://www.researchgate.net/figure/Location-of-14-electrodes-of-Emotiv-EEG-device_fig1_283441559</a></li>
-</ol>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-hou2015electrodes" class="csl-entry">
+Hou, X. 2015. <span>“Location of 14 Electrodes of Emotiv EEG Device.”</span> <a href="https://www.researchgate.net/figure/Location-of-14-electrodes-of-Emotiv-EEG-device_fig1_283441559">https://www.researchgate.net/figure/Location-of-14-electrodes-of-Emotiv-EEG-device_fig1_283441559</a>.
+</div>
+<div id="ref-jawabri2023cerebral" class="csl-entry">
+Jawabri, K. H., and S. Sharma. 2023. <span>“Physiology, Cerebral Cortex Functions.”</span> In <em>StatPearls [Internet]</em>. StatPearls Publishing. <a href="https://www.ncbi.nlm.nih.gov/books/NBK538496/">https://www.ncbi.nlm.nih.gov/books/NBK538496/</a>.
+</div>
+<div id="ref-roesler2013eeg" class="csl-entry">
+Roesler, O. 2013. <span>“<span>EEG Eye State</span> [Dataset].”</span> UCI Machine Learning Repository. <a href="https://doi.org/10.24432/C57G7J">https://doi.org/10.24432/C57G7J</a>.
+</div>
+<div id="ref-tesla_autopilot" class="csl-entry">
+Tesla Support. n.d. <span>“Autopilot and Full Self-Driving (Supervised).”</span> <a href="https://www.tesla.com/support/autopilot">https://www.tesla.com/support/autopilot</a>.
+</div>
+<div id="ref-R-tidyverse" class="csl-entry">
+Wickham, Hadley. 2023. <em>Tidyverse: Easily Install and Load the Tidyverse</em>. <a href="https://tidyverse.tidyverse.org">https://tidyverse.tidyverse.org</a>.
+</div>
+<div id="ref-R-ggplot2" class="csl-entry">
+Wickham, Hadley, Winston Chang, Lionel Henry, Thomas Lin Pedersen, Kohske Takahashi, Claus Wilke, Kara Woo, Hiroaki Yutani, Dewey Dunnington, and Teun van den Brand. 2024. <em>Ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics</em>. <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>.
+</div>
+</div>
 </div>
 </div>
 </div>
